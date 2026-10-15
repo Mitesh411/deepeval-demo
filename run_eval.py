@@ -46,8 +46,8 @@ class OpenRouterLLM(DeepEvalBaseLLM):
 def run_evaluation():
     print("Initializing DeepEval test suite with OpenRouter configuration...")
 
-    # Log in to Confident AI if CONFIDENT_API_KEY is available
-    confident_api_key = os.environ.get("CONFIDENT_API_KEY")
+    # Log in to Confident AI if CONFIDENT_API_KEY is available and non-empty
+    confident_api_key = os.environ.get("CONFIDENT_API_KEY", "").strip()
     if confident_api_key:
         print("Logging in to Confident AI Cloud...")
         deepeval.login(confident_api_key)
