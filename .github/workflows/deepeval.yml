@@ -29,6 +29,7 @@ jobs:
       - name: Run DeepEval Evaluation
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          CONFIDENT_API_KEY: ${{ secrets.CONFIDENT_API_KEY }}
         run: |
           python run_eval.py
 
