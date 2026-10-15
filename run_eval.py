@@ -56,9 +56,13 @@ def run_evaluation():
 
     # 1. Passing Test Case: LLM answer matches expected output exactly
     passing_test_case = LLMTestCase(
-        input="What is the capital of France?",
-        actual_output="Paris",
-        expected_output="Paris"
+    #    input="What is the capital of France?",
+    #    actual_output="Paris",
+    #    expected_output="Paris"
+        input="What is the primary function of an LLM evaluation framework?",
+        actual_output=
+        "An LLM evaluation framework provides systematic metrics and benchmark assertions to test the accuracy, relevancy, safety, and hallucination rates of LLM responses.",
+        expected_output="An LLM evaluation framework provides systematic metrics and benchmark assertions to test the accuracy, relevancy, safety, and hallucination rates of LLM responses."
     )
 
     # 2. Intentionally Failing Test Case: LLM answer differs from expected output
