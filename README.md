@@ -13,10 +13,11 @@ This repository provides a comprehensive, step-by-step guide and practical demon
    - [Method 1: Using DeepEval CLI (Recommended)](#method-1-using-deepeval-cli-recommended)
    - [Method 2: Using Custom Model Class (Python API)](#method-2-using-custom-model-class-python-api)
 5. [Running LLM Evaluations](#running-llm-evaluations)
-6. [Demonstrating Error Handling (Intentionally Failing Test Case)](#demonstrating-error-handling-intentionally-failing-test-case)
-7. [Saving and Zipping HTML Results](#saving-and-zipping-html-results)
-8. [Example Execution & Output](#example-execution--output)
-9. [Project Structure](#project-structure)
+6. [Integrating Confident AI Cloud](#integrating-confident-ai-cloud)
+7. [Demonstrating Error Handling (Intentionally Failing Test Case)](#demonstrating-error-handling-intentionally-failing-test-case)
+8. [Saving and Zipping HTML Results](#saving-and-zipping-html-results)
+9. [Example Execution & Output](#example-execution--output)
+10. [Project Structure](#project-structure)
 
 ---
 
@@ -67,10 +68,11 @@ python3 --version
 
 3. **Configure Environment Variables**:
 
-   Create a `.env` file in the root directory and add your OpenRouter API key:
+   Create a `.env` file in the root directory and add your OpenRouter API key and Confident AI API key:
 
    ```env
    OPENROUTER_API_KEY=your_openrouter_api_key_here
+   CONFIDENT_API_KEY=your_confident_ai_api_key_here
    ```
 
 ---
@@ -136,6 +138,16 @@ Run the evaluation script provided in this repository:
 ```bash
 python3 run_eval.py
 ```
+
+---
+
+## Integrating Confident AI Cloud
+
+To view evaluation runs, test cases, metrics, and regressions in the Confident AI Cloud dashboard:
+
+1. **Obtain Confident AI API Key**: Get your API key from the Confident AI dashboard.
+2. **Local Execution**: Set `CONFIDENT_API_KEY` in your `.env` file or environment. `run_eval.py` will automatically authenticate using `deepeval.login(CONFIDENT_API_KEY)` and upload test runs to Confident AI Cloud upon completion.
+3. **GitHub Actions Integration**: Set `CONFIDENT_API_KEY` as a repository secret in GitHub Settings (`Settings -> Secrets and variables -> Actions`). The `.github/workflows/deepeval.yml` pipeline will pass `CONFIDENT_API_KEY` to the evaluation step and upload test results on every push, pull request, or workflow dispatch.
 
 ---
 

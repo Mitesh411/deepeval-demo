@@ -1,6 +1,7 @@
 import os
 import zipfile
 from dotenv import load_dotenv
+import deepeval
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
 from deepeval.metrics import AnswerRelevancyMetric, ExactMatchMetric
@@ -44,6 +45,12 @@ class OpenRouterLLM(DeepEvalBaseLLM):
 
 def run_evaluation():
     print("Initializing DeepEval test suite with OpenRouter configuration...")
+
+    # Log in to Confident AI if CONFIDENT_API_KEY is available
+    confident_api_key = os.environ.get("CONFIDENT_API_KEY")
+    if confident_api_key:
+        print("Logging in to Confident AI Cloud...")
+        deepeval.login(confident_api_key)
 
     # Configure output directory for HTML reports
     output_dir = "reports"
