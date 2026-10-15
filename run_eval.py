@@ -47,10 +47,28 @@ def run_evaluation():
     print("Initializing DeepEval test suite with OpenRouter configuration...")
 
     # Log in to Confident AI if CONFIDENT_API_KEY is available
-    confident_api_key = os.environ.get("CONFIDENT_API_KEY")
-    if confident_api_key:
+    raw_key = os.environ.get("CONFIDENT_API_KEY", "")
+    confident_api_key = raw_key.strip().strip("'\"") if raw_key else ""
+
+    placeholders = {"your_confident_ai_api_key_here", "your_confident_api_key_here", "placeholder"}
+    if confident_api_key and confident_api_key.lower() not in placeholders:
         print("Logging in to Confident AI Cloud...")
-        deepeval.login(confident_api_key)
+        try:
+            deepeval.login(confident_api_key)
+            # Ensure runtime settings reflect the sanitized key
+            from deepeval.confident.api import set_confident_api_key
+            set_confident_api_key(confident_api_key)
+        except Exception as err:
+            print(f"Warning: Failed to log in to Confident AI Cloud with provided key: {err}")
+    else:
+        # Unset environment variable if invalid or placeholder so DeepEval runs in local mode
+        os.environ.pop("CONFIDENT_API_KEY", None)
+        try:
+            from deepeval.confident.api import set_confident_api_key
+            set_confident_api_key(None)
+        except Exception:
+            pass
+        print("CONFIDENT_API_KEY is not set or contains a placeholder. Running evaluation locally.")
 
     # Configure output directory for HTML reports
     output_dir = "reports"
@@ -82,7 +100,20 @@ def run_evaluation():
     test_cases = [passing_test_case, failing_test_case]
 
     print("\nRunning evaluation on test cases...")
-    res = evaluate(test_cases, metrics=[exact_match_metric], display_config=display_config)
+    try:
+        res = evaluate(test_cases, metrics=[exact_match_metric], display_config=display_config)
+    except Exception as e:
+        # If posting to Confident AI failed during evaluate (e.g., bad API key), fallback to running locally without Confident AI
+        if "Confident" in str(e) or "API key" in str(e) or "ConfidentApiError" in type(e).__name__:
+            print(f"\nWarning: Evaluation reporting to Confident AI failed ({e}). Falling back to local mode...")
+            try:
+                from deepeval.confident.api import set_confident_api_key
+                set_confident_api_key(None)
+            except Exception:
+                pass
+            res = evaluate(test_cases, metrics=[exact_match_metric], display_config=display_config)
+        else:
+            raise e
 
     # Locate generated HTML reports
     html_files = [os.path.join(output_dir, f) for f in os.listdir(output_dir) if f.endswith(".html")]
