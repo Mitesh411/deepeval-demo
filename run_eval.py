@@ -97,7 +97,25 @@ def run_evaluation():
         expected_output="Berlin"
     )
 
-    test_cases = [passing_test_case, failing_test_case]
+
+  passing_test_case2 = LLMTestCase(
+           input="What is the capital of France?",
+           actual_output="Paris",
+           expected_output="Paris"
+
+        )
+
+  passing_test_case3 = LLMTestCase(
+            input="What is 10 multiplied by 5?",
+            actual_output="40",
+            expected_output="50"
+
+        )
+
+
+
+    
+    test_cases = [passing_test_case, failing_test_case, passing_test_case2,passing_test_case3]
 
     print("\nRunning evaluation on test cases...")
     try:
