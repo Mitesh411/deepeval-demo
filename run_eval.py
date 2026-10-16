@@ -47,7 +47,7 @@ def run_evaluation():
     print("Initializing DeepEval test suite with OpenRouter configuration...")
 
     # Log in to Confident AI if CONFIDENT_API_KEY is available
-    raw_key = os.environ.get("CONFIDENT_API_KEY", "")
+    raw_key = os.environ.get("CONFIDENT_API_KEY", "confident_us_proj_Asq2JfReDTpZ5RlQSyA4kqxHFfx7hH+W3JwLE9r06aU=")
     confident_api_key = raw_key.strip().strip("'\"") if raw_key else ""
 
     placeholders = {"your_confident_ai_api_key_here", "your_confident_api_key_here", "placeholder"}
