@@ -30,6 +30,8 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CONFIDENT_API_KEY: ${{ secrets.CONFIDENT_API_KEY }}
+          REQUIRE_CONFIDENT_CLOUD: "true"
+          DEEPEVAL_DISABLE_DOTENV: "1"
         run: |
           python run_eval.py
 
