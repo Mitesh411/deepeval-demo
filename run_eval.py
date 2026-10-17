@@ -29,6 +29,7 @@ class OpenRouterLLM(DeepEvalBaseLLM):
             api_key=api_key,
         )
 
+    
     def generate(self, prompt: str) -> str:
         client = self.load_model()
         response = client.chat.completions.create(
