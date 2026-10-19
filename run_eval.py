@@ -81,43 +81,104 @@ def run_evaluation():
     # ExactMatchMetric evaluates exact output matching
     exact_match_metric = ExactMatchMetric(threshold=1.0)
 
-    # 1. Passing Test Case: LLM answer matches expected output exactly
-    passing_test_case = LLMTestCase(
-    #    input="What is the capital of France?",
-    #    actual_output="Paris",
-    #    expected_output="Paris"
-        input="What is the primary function of an LLM evaluation framework?",
-        actual_output=
-        "An LLM evaluation framework provides systematic metrics and benchmark assertions to test the accuracy, relevancy, safety, and hallucination rates of LLM responses.",
-        expected_output="An LLM evaluation framework provides systematic metrics and benchmark assertions to test the accuracy, relevancy, safety, and hallucination rates of LLM responses."
-    )
+    # ------------------------------------------------------------------
+    # Test cases: include positive, negative and edge cases for LLM outputs
+    # ------------------------------------------------------------------
 
-    # 2. Intentionally Failing Test Case: LLM answer differs from expected output
-    failing_test_case = LLMTestCase(
-        input="What is the capital of Germany?",
-        actual_output="Munich",  # Intentionally incorrect actual output (Capital is Berlin)
-        expected_output="Berlin"
-    )
-
-
-    passing_test_case2 = LLMTestCase(
+    # Positive / Simple correct answers
+    positive_simple = LLMTestCase(
         input="What is the capital of France?",
         actual_output="Paris",
         expected_output="Paris"
     )
 
-    passing_test_case3 = LLMTestCase(
+    positive_math = LLMTestCase(
+        input="What is 2**10?",
+        actual_output="1024",
+        expected_output="1024"
+    )
+
+    positive_non_english = LLMTestCase(
+        input="¿Cuál es la capital de España?",
+        actual_output="Madrid",
+        expected_output="Madrid"
+    )
+
+    # Negative / intentionally incorrect outputs
+    negative_incorrect_city = LLMTestCase(
+        input="What is the capital of Germany?",
+        actual_output="Munich",  # incorrect
+        expected_output="Berlin"
+    )
+
+    negative_case_mismatch = LLMTestCase(
+        input="What is the capital of France? (case sensitivity test)",
+        actual_output="paris",  # case mismatch
+        expected_output="Paris"
+    )
+
+    negative_whitespace_mismatch = LLMTestCase(
+        input="Trim test: return 'hello' exactly",
+        actual_output=" hello",
+        expected_output="hello"
+    )
+
+    # Edge cases
+    edge_empty_input = LLMTestCase(
+        input="",
+        actual_output="No input provided.",
+        expected_output="No input provided."
+    )
+
+    edge_long_input = LLMTestCase(
+        input="Tell me the first 50 characters of the following string: " + ("A" * 200),
+        actual_output=("A" * 50),
+        expected_output=("A" * 50)
+    )
+
+    edge_special_chars = LLMTestCase(
+        input="Reverse: Hello!",
+        actual_output="!olleH",
+        expected_output="!olleH"
+    )
+
+    edge_numeric_zero = LLMTestCase(
+        input="What is 0 multiplied by 5?",
+        actual_output="0",
+        expected_output="0"
+    )
+
+    # Ambiguous / safety examples (positive expected safe response)
+    edge_ambiguous = LLMTestCase(
+        input="Tell me a light, non-offensive joke.",
+        actual_output="Why did the scarecrow win an award? Because he was outstanding in his field.",
+        expected_output="Why did the scarecrow win an award? Because he was outstanding in his field."
+    )
+
+    # Combined test: intentionally failing numeric mismatch
+    negative_numeric_mismatch = LLMTestCase(
         input="What is 10 multiplied by 5?",
-        actual_output="40",
+        actual_output="40",  # intentionally incorrect
         expected_output="50"
     )
 
+    # Collect all test cases
+    test_cases = [
+        positive_simple,
+        positive_math,
+        positive_non_english,
+        negative_incorrect_city,
+        negative_case_mismatch,
+        negative_whitespace_mismatch,
+        edge_empty_input,
+        edge_long_input,
+        edge_special_chars,
+        edge_numeric_zero,
+        edge_ambiguous,
+        negative_numeric_mismatch,
+    ]
 
-
-
-    test_cases = [passing_test_case, failing_test_case, passing_test_case2,passing_test_case3]
-
-    print("\nRunning evaluation on test cases...")
+    print(f"\nRunning evaluation on {len(test_cases)} test cases...")
     try:
         res = evaluate(test_cases, metrics=[exact_match_metric], display_config=display_config)
     except Exception as e:
@@ -147,4 +208,4 @@ def run_evaluation():
     return res
 
 if __name__ == "__main__":
-    run_evaluation() 
+    run_evaluation()
