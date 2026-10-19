@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import deepeval
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
-from deepeval.metrics import AnswerRelevancyMetric, ExactMatchMetric
+from deepeval.metrics import ExactMatchMetric
 from deepeval.models import DeepEvalBaseLLM
 from deepeval.evaluate.configs import DisplayConfig
 
@@ -57,6 +57,9 @@ def run_evaluation():
     os.makedirs(output_dir, exist_ok=True)
     display_config = DisplayConfig(file_type="html", file_output_dir=output_dir)
 
+    # Instantiate custom OpenRouter LLM judge model
+    custom_llm = OpenRouterLLM(model_name="openai/gpt-4o-mini")
+
     # Define metrics
     # ExactMatchMetric evaluates exact output matching
     exact_match_metric = ExactMatchMetric(threshold=1.0)
@@ -81,16 +84,23 @@ def run_evaluation():
     res = evaluate(test_cases, metrics=[exact_match_metric], display_config=display_config)
 
     # Locate generated HTML reports
-    html_files = [os.path.join(output_dir, f) for f in os.listdir(output_dir) if f.endswith(".html")]
+    html_files = [
+        os.path.join(output_dir, f)
+        for f in os.listdir(output_dir)
+        if f.endswith(".html")
+    ]
     print(f"\nGenerated HTML Report(s): {html_files}")
 
     # Zip generated HTML reports into deepeval_results.zip
     zip_path = "deepeval_results.zip"
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-        for file in html_files:
-            zipf.write(file, arcname=os.path.basename(file))
+    if html_files:
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+            for file in html_files:
+                zipf.write(file, arcname=os.path.basename(file))
+        print(f"\nSuccessfully created compressed results file: {os.path.abspath(zip_path)}")
+    else:
+        print("\nNo HTML reports found to compress.")
 
-    print(f"\nSuccessfully created compressed results file: {os.path.abspath(zip_path)}")
     return res
 
 if __name__ == "__main__":
