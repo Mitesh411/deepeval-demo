@@ -148,6 +148,9 @@ To view evaluation runs, test cases, metrics, and regressions in the Confident A
 1. **Obtain Confident AI API Key**: Get your API key from the Confident AI dashboard.
 2. **Local Execution**: Set `CONFIDENT_API_KEY` in your `.env` file or environment. `run_eval.py` will automatically authenticate using `deepeval.login(CONFIDENT_API_KEY)` and upload test runs to Confident AI Cloud upon completion.
 3. **GitHub Actions Integration**: Set `CONFIDENT_API_KEY` as a repository secret in GitHub Settings (`Settings -> Secrets and variables -> Actions`). The `.github/workflows/deepeval.yml` pipeline will pass `CONFIDENT_API_KEY` to the evaluation step and upload test results on every push, pull request, or workflow dispatch.
+4. **Manual Workflow Execution & Downloadable Artifacts**:
+   - You can manually trigger the evaluation workflow at any time via the GitHub repository's **Actions** tab by selecting **DeepEval Evaluation Pipeline** and clicking **Run workflow** (`workflow_dispatch`).
+   - After execution finishes, navigate to the workflow run details page under **Artifacts** to download the generated `deepeval-html-reports` zip archive containing HTML report files (`reports/*.html`) and `deepeval_results.zip`.
 
 ---
 

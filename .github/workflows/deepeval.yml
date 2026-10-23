@@ -9,6 +9,7 @@ name: DeepEval Evaluation Pipeline
 
 jobs:
   evaluate:
+    name: Run DeepEval Evaluation Suite
     runs-on: ubuntu-latest
 
     steps:
@@ -33,7 +34,7 @@ jobs:
         run: |
           python run_eval.py
 
-      - name: Upload HTML Reports Artifact
+      - name: Upload Evaluation Reports & Results Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
