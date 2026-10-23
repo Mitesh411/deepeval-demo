@@ -1,6 +1,6 @@
 # DeepEval & OpenRouter LLM Testing Guide
 
-This repository provides a comprehensive, step-by-step guide and practical demonstration for evaluating Large Language Models (LLMs) using **DeepEval** and the **OpenRouter API**. It also demonstrates how to save evaluation reports into a compressed HTML zip archive and how DeepEval handles test case failures.
+This repository provides a comprehensive, step-by-step guide and practical demonstration for evaluating Large Language Models (LLMs) using **DeepEval** and the **OpenRouter API**. It also demonstrates how to save evaluation reports into a compressed HTML zip archive, how DeepEval handles test case failures, and how to automate evaluation pipelines via **GitHub Actions**.
 
 ---
 
@@ -15,8 +15,9 @@ This repository provides a comprehensive, step-by-step guide and practical demon
 5. [Running LLM Evaluations](#running-llm-evaluations)
 6. [Demonstrating Error Handling (Intentionally Failing Test Case)](#demonstrating-error-handling-intentionally-failing-test-case)
 7. [Saving and Zipping HTML Results](#saving-and-zipping-html-results)
-8. [Example Execution & Output](#example-execution--output)
-9. [Project Structure](#project-structure)
+8. [GitHub Actions CI/CD Pipeline](#github-actions-cicd-pipeline)
+9. [Example Execution & Output](#example-execution--output)
+10. [Project Structure](#project-structure)
 
 ---
 
@@ -193,6 +194,25 @@ with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
 
 ---
 
+## GitHub Actions CI/CD Pipeline
+
+This repository includes a pre-configured GitHub Actions workflow (`.github/workflows/deepeval_pipeline.yml`) that enables manual pipeline triggers (`workflow_dispatch`) and automatic execution on git pushes and pull requests.
+
+### Key Features of the Pipeline
+
+1. **Manual Trigger (`workflow_dispatch`)**:
+   - Users can manually trigger the pipeline directly from the **Actions** tab in GitHub.
+   - Allows custom input parameters (e.g., selecting an OpenRouter model identifier like `openai/gpt-4o-mini` or `anthropic/claude-3.5-sonnet`).
+
+2. **Repository Secret Requirement**:
+   - Add your OpenRouter API key as a repository secret named `OPENROUTER_API_KEY` under **Settings > Secrets and variables > Actions**.
+
+3. **Artifact Upload (`deepeval-html-reports`)**:
+   - After execution, the workflow automatically collects and uploads the generated `.html` test reports (inside `reports/`) and `deepeval_results.zip` as pipeline artifacts using `actions/upload-artifact@v4`.
+   - HTML reports and zip files are preserved for 30 days and can be downloaded directly from the GitHub Actions run summary page.
+
+---
+
 ## Example Execution & Output
 
 Executing `python3 run_eval.py` produces terminal output similar to:
@@ -242,10 +262,13 @@ Successfully created compressed results file: /app/deepeval_results.zip
 
 ```text
 deepeval-demo/
-├── .env                  # Environment variables (OpenRouter API key)
-├── requirements.txt      # Project dependencies
-├── run_eval.py           # Evaluation script (OpenRouter setup, tests, zip export)
-├── deepeval_results.zip  # Compressed zip archive containing HTML report
-├── reports/              # Generated HTML reports folder
-└── README.md             # Project documentation and setup guide
+├── .github/
+│   └── workflows/
+│       └── deepeval_pipeline.yml  # GitHub Actions workflow with manual trigger & artifact upload
+├── .env                           # Environment variables (OpenRouter API key)
+├── requirements.txt               # Project dependencies
+├── run_eval.py                    # Evaluation script (OpenRouter setup, tests, zip export)
+├── deepeval_results.zip           # Compressed zip archive containing HTML report
+├── reports/                       # Generated HTML reports folder
+└── README.md                      # Project documentation and setup guide
 ```
